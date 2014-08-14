@@ -138,7 +138,7 @@ func! s:perlInit()
 
 		return 0 if !$squeezed && !@rest;
 		if ($squeezed && @rest){
-			$mat->[$rest[((sample(0,@rest,1,1))[0])]]=((2,2,2,4)[((sample(0,4,1,1))[0])]);
+			$mat->[$rest[((sample(0,scalar(@rest),1,1))[0])]]=((2,2,2,4)[((sample(0,4,1,1))[0])]);
 		}
 		return 1;
 	}
