@@ -11,14 +11,14 @@ HOW TO PLAY
 
 3. play the game,OPERATING keys as fellows:
 
-	<F2> -- Reset game
+	\<F2\> -- Reset game
 
-	<F3> -- Quit  game
+	\<F3\> -- Quit  game
 
-	<Up> -- Move up
+	\<Up\> -- Move up
 
-	<Down> -- Move down
+	\<Down\> -- Move down
 
-	<Left> -- Move Left
+	\<Left\> -- Move Left
 
-	<Right> -- Move Right
+	\<Right\> -- Move Right
