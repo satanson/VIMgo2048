@@ -38,7 +38,14 @@ func! s:drawBoard(cellw,cellh,celln)
 	let maxlinenum=(a:cellh+1)*a:celln+1
 	while linenum<=maxlinenum 
 		if (linenum-1)%(a:cellh+1)==0
-			call setline(linenum,s:str((a:cellw+1)*a:celln+1,"-"))
+			let s = s:str((a:cellw+1)*a:celln+1,"-")
+			let lst = split(s,'\s*')
+			for i in range(0,a:celln,1)
+				let lst[i*(a:cellw+1)]='+'
+			endfor
+			let s = join (lst,'')
+			"call setline(linenum,s:str((a:cellw+1)*a:celln+1,"-"))
+			call setline(linenum,s)
 		else
 			call setline(linenum,s:drawVruler(a:cellw,a:celln))
 		endif
@@ -113,8 +120,42 @@ func! s:perlInit()
 		return ($ok,\@array);
 	}
 
+	sub squeezeTo {
+		my ($dir,$n,@m) = @_;
+		foreach my $i (1..$n){
+			my @i=();
+			if ($dir eq "left"){
+				@i=map {($i-1)*$n+$_-1} 1..$n;
+			}elsif($dir eq "right"){
+				@i=map {($i-1)*$n+($n-$_)} 1..$n;
+			}elsif($dir eq "top"){
+				@i=map {($_-1)*$n+$i-1} 1..$n;
+			}elsif($dir eq "bottom"){
+				@i=map {($n-$_)*$n+$i-1} 1..$n;
+			}
+			my ($ok,$array)=squeeze(@m[@i]);
+			if ($ok){
+				return $ok;
+			}
+		}
+		return 0;
+	}
+
+	sub canSqueeze {
+		my ($n,@m) = @_;
+		my $nz=()=grep{not $_} @m;
+		return 1 if $nz;
+
+		return squeezeTo("left",$n,@m)  || 
+			   squeezeTo("right",$n,@m) ||
+			   squeezeTo("top",$n,@m)   ||
+			   squeezeTo("bottom",$n,@m);
+	}
 	sub shiftMatrix {
 		my ($dir,$n,$mat)=@_;
+
+		if (!canSqueeze($n,@{$mat})) {return 0;}
+		
 		my $squeezed=0;
 		foreach my $i (1..$n){
 			my @i=();
@@ -136,7 +177,6 @@ func! s:perlInit()
 		my @rest=();
 		foreach (0..$#{$mat}){push @rest,$_ if $mat->[$_]==0}
 
-		return 0 if !$squeezed && !@rest;
 		if ($squeezed && @rest){
 			$mat->[$rest[((sample(0,scalar(@rest),1,1))[0])]]=((2,2,2,4)[((sample(0,4,1,1))[0])]);
 		}
